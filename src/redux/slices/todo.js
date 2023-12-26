@@ -5,9 +5,10 @@ import { createSlice } from '@reduxjs/toolkit';
 // ----------------------------------------------------------------------
 
 const initialState = {
-    isLoading: false,
+    ischeckedUser: false,
     error: null,
-    todos: []
+    todos: [],
+    editId: '',
 };
 
 const slice = createSlice({
@@ -15,8 +16,8 @@ const slice = createSlice({
     initialState,
     reducers: {
         // START LOADING
-        startLoading(state) {
-            state.isLoading = true;
+        startLoading(state, action) {
+            state.ischeckedUser = action.payload;
         },
 
         // HAS ERROR
@@ -37,7 +38,19 @@ const slice = createSlice({
                 todo.completed = !todo.completed;
             }
         },
-
+        deleteTodo(state, action){
+            const filtered = state.todos.filter((todo) => todo.id !== action.payload)
+            state.todos = filtered 
+        },
+        editTodo(state, action){
+            state.editId = action.payload
+            state.isLoading = false;
+            console.log(state.editId)
+        },
+        saveTodo(state, action){
+            const updatedTodos = state.todos.map(items => items.id === state.editId ? {...items, text : action.payload}: items)
+            state.todos = updatedTodos
+        }
     },
 });
 
@@ -46,7 +59,7 @@ export default slice.reducer;
 
 // Actions
 
-export const { startLoading, hasError, addTodo, toggleTodo } = slice.actions;
+export const { startLoading, hasError, addTodo, toggleTodo, deleteTodo, editTodo , saveTodo} = slice.actions;
 
 // ----------------------------------------------------------------------
 
